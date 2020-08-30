@@ -14,9 +14,20 @@
             0CB2
             0CB3  Kernel32.GetVersion()    Returns 0A280105
             0CCF  return
-          0DD2
-	    0F3F
-            0F4B  Kernel32.GetModuleHandleA()
+          0DD2  mov DWORD PTR DS:[371F2C], EAX
+          0DD7  test eax, eax
+          0DD9  je 0E98
+          0DDF  call 0F3F
+	    0F3F  push ebx
+            0F40  push esi
+            0F41  mov esi, WDIR62F.__1F48
+            0F46  push WDIR62F.__0268
+            0F4B  Kernel32.GetModuleHandleA(pModule = "KERNEL32")
+            0F50  mov ebx, eax
+            0F52  mov DWORD PTR DS:[ESI], ebx
+            0F54  push 23
+            0F56  push ebx
+            0F57  call 0EE8(handleToKernel32, 23)
               0EE8
               0F39 return
             0F5C
@@ -25,11 +36,28 @@
             0F6D
               0EE8
               0F39 return
-            0F7E
-            0F8D Kernel32.GetProcAddress(hModule, "QT_Thunk")
-            0FC4 return
+            0F7E  add esp, 8
+            0F81  mov DWORD PTR DS:[3731F40], eax
+            0F86  push WDIR62F.__0271
+            0F8B  push DWORD PTR DS:[ESI]
+            0F8D  Kernel32.GetProcAddress(hModule, "QT_Thunk")
+            0F92  mov DWORD PTR DS:[371F44], eax
+            0F97  cmp DWORD PTR DS:[ESI], 0
+            0F9A  je WDIR62F.__0FC0
+            0F9C  cmp DWORD PTR DS:[371F38], 0
+            0FA3  je WDIR62F.__0FC0
+            0FA5  cmp DWORD PTR DS:[371F3C], 0
+            0FAC  je WDIR62F.__0FC0
+            0FAE  cmp DWORD PTR DS:[371F40], 0
+            0FB5  je WDIR62F.__0FC0
+            0FB7  cmp DWORD PTR DS:[371F44], 0
+            0FBE  jnz WDIR62F.__0FC5                          (JUMP NOT TAKEN - Unlike on Win98SE)
+            0FC0  xor eax, eax            (Puts 0 in eax)
+            0FC2  pop esi
+            0FC3  pop ebx
+            0FC4  return
           0DE4  test eax, eax
-          0DE6  jnz WDIR62.F.  0E02     (JUMP NOT TAKEN)
+          0DE6  jnz WDIR62.F.  0E02                           (JUMP NOT TAKEN - Unlike on Win98SE)
           0DE8  push 30             
           0DEA  push WDIR62F.  01CC
           0DEF  push WDIR62F.  01AC  
@@ -37,7 +65,7 @@
           0DF6  User32.MessageBoxA(null, "Unable to link to KERNEL32.DLL", "WinDirect Error", MB_OK | MB_ICONEXCLAMATION | MB_APPLMODAL)
           ---------------------------------------------
 
---------------------------
+=========================================================================================================================================
 0x005F0000 WDIR62F.DLL Entrypoint                ON WIN 98 SE
 
       53F1
@@ -67,22 +95,26 @@
             0F8D Kernel32.GetProcAddress(hModule, "QT_Thunk")
             0F92 mov DWORD PTR DS:[601F44], EAX
             0F97 CMP DWORD PTR DS:[ESI], 0
-            0F9A JE 0FC0
+            0F9A  je WDIR62F.__0FC0
+            0F9C  cmp DWORD PTR DS:[371F38], 0
+            0FA3  je WDIR62F.__0FC0
+            0FA5  cmp DWORD PTR DS:[371F3C], 0
+            0FAC  je WDIR62F.__0FC0
+            0FAE  cmp DWORD PTR DS:[371F40], 0
+            0FB5  je WDIR62F.__0FC0
+            0FB7  cmp DWORD PTR DS:[371F44], 0
+            0FBE  jnz __0FC5                                     (JUMP TAKEN - Unlike on WinXP)
 
-            0FBE JNZ __0FC5   (JUMP TAKEN)
-
-            0FC5  mov eax, 1
+            0FC5  mov eax, 1                           (Success return value)
             0FCA  pop esi
             0FCB  pop ebx
             0FCC  return
-          0DE4
-          0DE6 JNZ 0E02                                (JUMP TAKEN  - Unlike on WinXP)
+          0DE4 test eax, eax
+          0DE6 JNZ 0E02                                          (JUMP TAKEN - Unlike on WinXP)
 	  0E02 push 01DC  "WDIR62.DLL"
           0E07 call Kernel32.#35
-          ...
+          ... continues ...
           -----------------------------------------
-
-
 
 
 
