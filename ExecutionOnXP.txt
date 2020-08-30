@@ -1,0 +1,88 @@
+0x00360000  WDIR62F.DLL Entrypoint             ON WIN XP
+0x0036537C  
+
+      53F1
+      5434
+        0CD0
+        0D0D  LoadCursorA(null, IDC_ARROW)
+        0D20  LoadIconA(350000, 10000)
+        0D36  GetStockObject(BLACK_BRUSH)
+        0D62  RegisterClassA(pWndClass)
+	0D88  GetPrivateProfileIntA(Compatibility, BuggyWinDriver, 1, WINDIRECT.INI)
+	0DAD  WritePrivateProfileStringA(Compatibility, BuggyWinDriver, 1, WDIRECT.INI)
+          0DCD
+            0CB2
+            0CB3  Kernel32.GetVersion()    Returns 0A280105
+            0CCF  return
+          0DD2
+	    0F3F
+            0F4B  Kernel32.GetModuleHandleA()
+              0EE8
+              0F39 return
+            0F5C
+              0EE8
+              0F39 return
+            0F6D
+              0EE8
+              0F39 return
+            0F7E
+            0F8D Kernel32.GetProcAddress(hModule, "QT_Thunk")
+            0FC4 return
+          0DE4  test eax, eax
+          0DE6  jnz WDIR62.F.  0E02     (JUMP NOT TAKEN)
+          0DE8  push 30             
+          0DEA  push WDIR62F.  01CC
+          0DEF  push WDIR62F.  01AC  
+          0DF4  push 0
+          0DF6  User32.MessageBoxA(null, "Unable to link to KERNEL32.DLL", "WinDirect Error", MB_OK | MB_ICONEXCLAMATION | MB_APPLMODAL)
+          ---------------------------------------------
+
+--------------------------
+0x005F0000 WDIR62F.DLL Entrypoint                ON WIN 98 SE
+
+      53F1
+      5434
+        0CD0
+        0D0D  LoadCursorA(null, IDC_ARROW)
+        0D20  LoadIconA(350000, 10000)
+        0D36  GetStockObject(BLACK_BRUSH)
+        0D62  RegisterClassA(pWndClass)
+	0D88  GetPrivateProfileIntA(Compatibility, BuggyWinDriver, 1, WINDIRECT.INI)
+	0DAD  WritePrivateProfileStringA(Compatibility, BuggyWinDriver, 1, WDIRECT.INI)
+          0DCD
+            0CB2
+            0CB3  Kernel32.GetVersion()    Returns C0000A04
+          0DD2
+            0F3F
+            0F4B  Kernel32.GetModuleHandleA()
+              0EE8
+
+            0F5C
+              0EE8
+              0F39 return
+            0F6D
+              0EE8
+              0F39 return
+            0F7E
+            0F8D Kernel32.GetProcAddress(hModule, "QT_Thunk")
+            0F92 mov DWORD PTR DS:[601F44], EAX
+            0F97 CMP DWORD PTR DS:[ESI], 0
+            0F9A JE 0FC0
+
+            0FBE JNZ __0FC5   (JUMP TAKEN)
+
+            0FC5  mov eax, 1
+            0FCA  pop esi
+            0FCB  pop ebx
+            0FCC  return
+          0DE4
+          0DE6 JNZ 0E02                                (JUMP TAKEN  - Unlike on WinXP)
+	  0E02 push 01DC  "WDIR62.DLL"
+          0E07 call Kernel32.#35
+          ...
+          -----------------------------------------
+
+
+
+
+
