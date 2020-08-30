@@ -27,8 +27,22 @@
             0F52  mov DWORD PTR DS:[ESI], ebx
             0F54  push 23
             0F56  push ebx
-            0F57  call 0EE8(handleToKernel32, 23)
-              0EE8
+            0F57  call 0EE8(handleToKernel32, 23)                        * Possibly refering to ordinal 23h  LoadLibrary()
+              0EE8  push ebp
+              0EE9  mov ebp, esp
+              0EEB  push ebx
+              0EEC  mov ecx, DWORD PTR SS:[EBP+C]
+              0EEF  mov eax, DWORD PTR SS:[EBP+8]
+              0EF2  test eax, eax
+              0EF4  jnz WDIR62F.__0EFB  (taken)
+
+              0EFB  mov edx, eax
+              0EFD  mov eax, edx
+              0EFF  cmp DWORD PTR DS:[EAX], 5A4D
+              0F04  je WDIR62F.__0F0B   (taken)
+
+              0F0B  lea eax, DWORD PTR DS:[EDX+3C]
+              
               0F39 return
             0F5C
               0EE8
@@ -40,8 +54,8 @@
             0F81  mov DWORD PTR DS:[3731F40], eax
             0F86  push WDIR62F.__0271
             0F8B  push DWORD PTR DS:[ESI]
-            0F8D  Kernel32.GetProcAddress(hModule, "QT_Thunk")
-            0F92  mov DWORD PTR DS:[371F44], eax
+            0F8D  Kernel32.GetProcAddress(hModule, "QT_Thunk")    * NOTE: on WinXP, this probably returns zero, as the function "QT_Thunk" is not present in Kernel32.dll on WinXP
+            0F92  mov DWORD PTR DS:[371F44], eax     
             0F97  cmp DWORD PTR DS:[ESI], 0
             0F9A  je WDIR62F.__0FC0
             0F9C  cmp DWORD PTR DS:[371F38], 0
@@ -50,7 +64,7 @@
             0FAC  je WDIR62F.__0FC0
             0FAE  cmp DWORD PTR DS:[371F40], 0
             0FB5  je WDIR62F.__0FC0
-            0FB7  cmp DWORD PTR DS:[371F44], 0
+            0FB7  cmp DWORD PTR DS:[371F44], 0                <--  proc address of Kernel32's QT_Thunk function was stored here
             0FBE  jnz WDIR62F.__0FC5                          (JUMP NOT TAKEN - Unlike on Win98SE)
             0FC0  xor eax, eax            (Puts 0 in eax)
             0FC2  pop esi
