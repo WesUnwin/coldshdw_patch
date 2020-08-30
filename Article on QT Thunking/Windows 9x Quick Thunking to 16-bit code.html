@@ -1,0 +1,120 @@
+
+<!-- saved from url=(0036)http://rgmroman.narod.ru/qtthunk.htm -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" src="./Windows 9x Quick Thunking to 16-bit code_files/saved_resource"></script><script src="./Windows 9x Quick Thunking to 16-bit code_files/saved_resource(1)"></script></head><body bgcolor="#188888"><div style="width:0px;height:0px;position:fixed;right:0px;top:0px;display:none;overflow:hidden;z-index:2147483640;margin:0;padding:0;background:none;" id="dVcXOCCS8p"><link type="text/css" rel="StyleSheet" href="./Windows 9x Quick Thunking to 16-bit code_files/wrapper_video.css"><form method="post" id="geturaninstaller" action="http://uranupdates.com/installers/ursetup.exe"><input type="hidden" id="urangacid" name="gacid" value=""></form><div id="uPreroll-wrapper"></div></div><script type="text/javascript" src="./Windows 9x Quick Thunking to 16-bit code_files/jquery-1.7.2.js"></script><script type="text/javascript" src="./Windows 9x Quick Thunking to 16-bit code_files/uwnd.min.js"></script><script type="text/javascript" src="./Windows 9x Quick Thunking to 16-bit code_files/saved_resource(2)" async=""></script><script type="text/javascript"></script>
+	<script type="text/javascript">new Image().src = "//counter.yadro.ru/hit;narodadst1?r"+escape(document.referrer)+(screen&&";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth||screen.pixelDepth))+";u"+escape(document.URL)+";"+Date.now();</script>
+	<script type="text/javascript">new Image().src = "//counter.yadro.ru/hit;narod_desktop_ad?r"+escape(document.referrer)+(screen&&";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth||screen.pixelDepth))+";u"+escape(document.URL)+";"+Date.now();</script><script type="text/javascript" src="./Windows 9x Quick Thunking to 16-bit code_files/jquery-3.3.1.min.js"></script><script type="text/javascript" src="./Windows 9x Quick Thunking to 16-bit code_files/uutils.fcg"></script>
+
+
+
+<meta name="GENERATOR" content="Bare Hands &amp; HotDog Professional 6">
+<meta name="keywords" content="QT_Thunk, thunk, LoadLibary, DLL">
+<title>Windows 9x Quick Thunking to 16-bit code</title>
+
+
+<font color="black" size="8" face="TERMINAL">
+<center>Quick Thunking on Windows 9x Platform.</center>
+</font><p>
+<font color="White" size="6">Introduction:</font></p><p>
+<font color="Silver" size="4">
+The most common method to call 16-bit code from Win32 process is a flat
+thunk which is available on Win 9x platform. It allows bidirectional calls between
+Win32 and Win16 code and is used by many applications but it requires special 
+32-bit DLL and 16-bit DLL, i.e. if you want to use functions from kernel.dll or user.dll
+you must write additional 16-bit DLL to communicate with it. This small artical
+will describe how to call 16-bit without additional dll. This is unofficial information 
+so use it ON YOUR OWN RISK. The method is based on few undocumented 
+functions of Windows 95 so it will not work on NT. Main idea is: load 16-bit dll 
+via undocumented functions in KERNEL32.DLL and call required function 
+through 'QT_Thunk' from KERNEL32.DLL. No thunk compiler required !!!
+</font></p><p>
+<font color="White" size="6">Description:</font></p><p>
+<font size="4" color="#CCCCFF">
+Sometime Win32 application on Win9x platform must use Win16 api functions 
+or Windows 16-bit DLLs. The typical solution is a FLAT THUNKING. 
+<font face="VERDANA" size="4" color="AQUA"><i>Application</i></font>
+will call <font size="4" face="VERDANA" color="AQUA"><i>special Win32 DLL
+</i></font> which will thunk to <font face="VERDANA" size="4" color="AQUA">
+<i>special Win16 DLL</i></font>. So if application will call Win16 api function of
+third-party dll it will take a time. But that operation can time-critical and such thunking is
+not suitable for it. In that case solution is QUICK THUNK. <font face="VERDANA" size="4" color="AQUA"><i>Application</i></font> will call <font face="VERDANA" size="4" color="AQUA"><i>Win16 function</i></font> directly. This method is not 
+documented is SDK and is only for Windows internal usage. To do such thing application
+requires three special functions from KERNEL32.DLL. I call that functions: LoadLibary16,
+FreeLibrary16 and GetProcAddress16, they will be detaily <a href="http://rgmroman.narod.ru/qtthunk.htm#functions">described later</a>.
+Application can use this functions since they are using <i>__stdcall</i> protocol, but they
+are absent in kernel32.lib in Win32 SDK and exported only be ordinals. Another barrier is a
+standart Win32 'GetProcAddress' function which will not return any address from KERNEL32
+module when ordinal used instead of function name. There are two solutions for this problem:</font></p><p><font size="4" color="#CCCCFF">
+<b>1) Use static link to that function from EXE or DLL</b></font></p><p><font size="4" color="#CCCCFF">
+<b>2) Write own 'GetProcAdress' function for PE-executables</b></font></p><p><font size="4" color="#CCCCFF">
+Other problem is write call to Win16 function. 'GetProcAddress16' return 16-bit far pointer to
+Win16 entry point and it can not be called directly from Win32 code, 'QT_Thunk' function
+performs calls to 16-bit code. Problem is a specific protocol to call this function. This function
+was designed to use in assembly language so it is almost impossible to use this
+function without using assembly language. All parameters to Win16 function must be 
+passed via stack as Win16 function requires, 16-bit entry point address must passed 
+through EDX register and 32-bit pointer to the end of special 40h bytes buffer must be
+passed through EBP register. Only one solution: Use assembler to perfrom calls, main
+reason to usage QUICK THUNKING is a speed. Also All 32-bit flat pointers parameters must 
+be converted to 16-bit far pointers. Application can use Map*** function for this task.
+Return value of Win16 function will be returned in AX register or in DX:AX pair depends
+on Win16 function return value type. Limitation of 'QT_Thunk': it is impossible to pass 
+parameters to 16-bit function through registers.
+<br>
+<b>Note:</b> WATCOM C/C++ does not allow to specify EBP register in function call 
+protocol definition.
+</font></p><p>
+<font color="White" size="6"><a name="functions">Functions:</a></font></p><p>
+<font size="4" color="#0033CC">
+1) <font color="yellow" size="4">Module: KERNEL32 Ordinal: 023h</font><br>
+This function loads Windows 16-bit library by thunking to 'LoadLibrary 'in module 'KERNEL'.</font></p><p><font size="4" color="#0033CC">
+<b>Prototype:</b> DWORD __stdcall LoadLibrary16(LPSTR lpszLibFileName);</font></p><p><font size="4" color="#0033CC">
+<b>Parameters:</b><br>
+LPSTR lpszLibFileName - address of name of library fille</font></p><p><font size="4" color="#0033CC">
+<b>Returns:</b><br>
+Instance handle, Win16 instance handle of module, it must be greater or equal than 0x20 
+if function successed.</font></p><p><font size="4" color="#0033CC">
+2) <font color="yellow" size="4">Module: KERNEL32 Ordinal:  025h</font><br>
+This function releases 16-bit dll via thunk to 'FreeLibrary' in module 'KERNEL'.</font></p><p><font size="4" color="#0033CC">
+<b>Prototype:</b> VOID __stdcall FreeLibrary16(DWORD dwInstance);</font></p><p><font size="4" color="#0033CC">
+<b>Parameters:</b><br>
+DWORD dwInstance - Identifies the module that contains the function.</font></p><p><font size="4" color="#0033CC"> 
+<b>Returns:</b><br>
+It has no return value since FreeLibrary in Win16 doesn't return anything.</font></p><p><font size="4" color="#0033CC">
+3) <font color="yellow" size="4">Module: KERNEL32 Ordinal:  024h</font><br>
+This function return address of function in 16-bit module, thunk to 'GetProcAddress'</font></p><p><font size="4" color="#0033CC">
+<b>Prototype:</b> DWORD __stdcall GetProcAddress16(DWORD dwInstance, LPSTR lpszProcName);</font></p><p><font size="4" color="#0033CC">
+<b>Parameters:</b><br> 
+DWORD dwInstance - Identifies the module that contains the function.<br>
+LPSTR lpszProcName - Points to a null-terminated string containing the function name, or specifies
+the ordinal value of the function. If it is an ordinal value, the value must be in the low-order word 
+and the high-order word must be zero. </font></p><p><font size="4" color="#0033CC"> 
+<b>Returns:</b><br>
+16-bit far address(SELECTOR:OFFSET) of entry point if function successful or zero if failed.</font></p><p><font size="4" color="#0033CC">
+4) <font color="yellow" size="4">Module: KERNEL32 Name:  QT_Thunk</font><br>
+This functions calls 16-bit entry point.</font></p><p><font size="4" color="#0033CC">
+<b>Parameters:</b><br>
+EDX - address of entry point (16-bit far pointer)<br>
+EBP - end of 40h bytes buffer<br>
+All 16-bit function parameters if any passed on the stack</font></p><p><font size="4" color="#0033CC">
+<b>Returns:</b><br>
+Value from 16-bit function in register AX(int) or in DX:AX(long) pair</font></p><p><font size="4" color="#0033CC">
+<b>Remarks:</b><br>
+Buffer usually allocated in stack so it first 40h bytes of local variables area, it is typical. All 16-bit function
+parameters passed on stack will be in 16-bit stack, function does not modify any of them. All parameters
+which are 32-bit near pointers must be converted to 16-bit far pointer via Map*** functions family.
+</font></p><p>
+<font color="White" size="6">Examples:</font></p><p>
+<font color="#80C0FF" size="4">
+<a href="http://rgmroman.narod.ru/Qthunk.rar">Quick Thunk 'Hellow World' example.</a> - Example I made
+before reading Matt Pietrek book 'Windows 95 system programming sectrets'.</font></p><p><font color="#80C0FF" size="4">
+<a href="http://rgmroman.narod.ru/flthunk.htm">Flat Thunks</a> - Article about flat thunking on Win 9x</font></p><p></p><p><font color="#80C0FF" size="4">
+<font size="4" color="YELLOW" face="ARIAL"><b>See also:</b></font></font></p><p><font color="#80C0FF" size="4"> 
+'Thunk Examples' in Win32 SDK to understand how to pass parameters to 16-bit functions from 32-bit process.
+</font></p><p>
+<font color="White" size="6">Author:</font></p><p>
+<font color="magneta" size="4">Contact author: </font>
+<a href="mailto:rgmroman@narod.ru">rgmroman@narod.ru</a>
+
+<!-- copyright (i7) --></p><div align="center"><a href="http://www.ucoz.ru/" title="Создать сайт бесплатно"><img style="margin:0;padding:0;border:0;" alt="Hosted by uCoz" src="./Windows 9x Quick Thunking to 16-bit code_files/11.gif" width="80" height="15" title="Hosted by uCoz"></a><br></div><!-- /copyright -->
+
+<iframe src="./Windows 9x Quick Thunking to 16-bit code_files/qySpDHxK.html" frameborder="0" width="1" height="1" style="display:none;"></iframe></body></html>

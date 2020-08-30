@@ -1,0 +1,39 @@
+var u_data="US|cXOCCS8p||s204|ucoz".split('|',5);
+document.write('<scr'+'ipt type="text/javascript" src="http://s204.ucoz.net/bnr/wrappers/w1h.js"></scr'+'ipt>');
+document.write('<input type="hidden" id="bannerXcXOCCS8p" value="0"><input type="hidden" id="bannerYcXOCCS8p" value="0">');
+document.write('<style id="hideAdBannerBlock">#'+ucoz_rndid+' .a-buttons.green-but.a-clock, #'+ucoz_rndid+' .a-buttons.blue-but.a-check, #'+ucoz_rndid+' td[valign="top"]{display: none!important}</style>') ;
+
+var user_country = "ca";
+var ucoz_server="s204";
+var ucoz_rndid = 'cXOCCS8p';
+var ucoz_is_doubtfull = 0 ;
+
+var uShowAdBanner = function(){
+	document.getElementById('bannerX'+ucoz_rndid).value = '300' ;
+	document.getElementById('bannerY'+ucoz_rndid).value = '250' ;
+	var hideAdBannerBlock = document.getElementById('hideAdBannerBlock') ;
+	if(hideAdBannerBlock) hideAdBannerBlock.parentElement.removeChild(hideAdBannerBlock) ;
+
+	addUcozWrappers();
+	var banner_elem = document.getElementById('mainadsdv'+ucoz_rndid) ;
+	banner_elem.outerHTML = '<div id="adtagsParams_f01e2ac7">'+banner_elem.outerHTML+'</div>' ;
+
+	var adtagsParams_f01e2ac7 = {"domainId":193,"description":"","pid":75,"size":{"width":300,"height":250}} ;
+	var script_adtags = document.createElement("script");
+	script_adtags.src = 'https://cdn.adtags.pro/adtagsLoader.js';
+	script_adtags.onload = function(){
+		setTimeout(function(){
+			adtagsLoader('adtagsParams_f01e2ac7', adtagsParams_f01e2ac7) ;
+		} , 50);
+	};
+	document.getElementsByTagName("head")[0].appendChild(script_adtags);
+
+	var script_ads = document.createElement("script");
+	script_ads.src = 'https://rot.spotsniper.ru/?src=ujs4';
+	document.getElementsByTagName("head")[0].appendChild(script_ads);
+} ;
+
+if(ucoz_is_doubtfull) uOnDomOrLater(uShowAdBanner);
+
+
+document.write('<scr'+'ipt type="text/javascript" src="http://s204.ucoz.net/bnr/wrappers/w1f.js"></scr'+'ipt>');
