@@ -1,4 +1,6 @@
 # coldshdw_patch
+UPDATE:  some of these games below may be available for Steam, and it might be easier to just install/run it from there.
+
 Fix to the "Unable to link to KERNEL32.DLL" error preventing games like Disney Interactive's Cold Shadow (For PC), from starting up.
 This is a partial fix that allows the game to start up and generally be useable but does not fix the full screen functionality.
 
