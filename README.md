@@ -16,8 +16,7 @@ May also be useful for fixing other games like:
 This patch works by replacing two files (WDIR62F.DLL and PMPRO62F.DLL) in the installation folder on
 your computer with replacement versions of these two files.
 
-Easiest way to do this is download this repository as a zip folder, then copy the folder "COLDSHDW (PATCHED)" in this repository overtop of
-C:/DISNEY/COLDSHDW.
+Easiest way to do this is download this repository as a zip folder, then copy the files in "COLDSHDW (PATCHED FILES)" in this repository overtop of the files with the same names in C:/DISNEY/COLDSHDW or wherever you installed the game.
 
 After that simply start COLDSHDW.EXE to run the game.
 
